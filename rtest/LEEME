@@ -1,0 +1,4 @@
+La salida que uno obtiene de --output en SBATCH se escribe a un archivo local y queda todo asincronizado (al menos a nivel de 'escribo algo en archivo). Averiguar si hace falta tener una forma mas prolija de generar esto o no (depende de las aplicaciones).
+
+
+Obs: Creo que en una de esas no es dificil hacerlo prolijo y en tal caso no va sobrar.
