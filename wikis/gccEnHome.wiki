@@ -1,0 +1,68 @@
+h1. Versión de GCC/G++ vieja
+
+h2. Problema
+
+La versión de @g++@ en el cluster puede ser vieja y el paquete RcppArmadillo requiere una versión mas nueva de para ser compilada. En particular:
+
+<pre>
+$ gcc --version
+gcc (GCC) 4.4.7 20120313 (Red Hat 4.4.7-17)
+</pre>
+
+Y al instalar RcppArmadillo en R obtenemos: 
+
+<pre>
+> install.packages("RcppArmadillo")
+...
+configure: WARNING: Only g++ version 4.7.2 or greater can be used with RcppArmadillo.
+configure: error: Please use a different compiler.
+...
+</pre>
+
+h2. Solución
+
+Instalaremos GCC 8.1.0 en nuestro home. *Esto llevará un buen tiempo.*
+
+# Primero lo bajamos y descomprimimos.
+<pre>
+$ wget https://ftpmirror.gnu.org/gcc/gcc-8.1.0/gcc-8.1.0.tar.gz
+$ tar xzf gcc-8.1.0.tar.gz
+$ cd gcc-8.1.0
+</pre>
+# Con un editor de consola editamos el archivo @./contrib/download_prerequisites@ cambiando la línea
+<pre>
+base_url='ftp://gcc.gnu.org/pub/gcc/infrastructure/'
+</pre>
+por 
+<pre>
+base_url='http://gcc.gnu.org/pub/gcc/infrastructure/'
+</pre>
+## Terminamos de bajar.
+<pre>
+$ ./contrib/download_prerequisites
+</pre>
+# Creamos y nos movemos a la carpeta para compilar.
+<pre>
+$ cd ..
+$ mkdir gcc-8.1.0-build
+$ cd gcc-8.1.0-build
+$ $PWD/../gcc-8.1.0/configure --prefix=$HOME/gcc-8.1.0 --disable-multilib
+</pre>
+Compilamos con cuatro cores. *El make puede tardar un par de horas, dejar el ssh conectado.*
+<pre>
+$ make -j4
+$ make install
+</pre>
+# Si todo salió bien, deberíamos poder ejecutar lo siguiente:
+<pre>
+$ ~/gcc-8.1.0/bin/g++ --version
+g++ (GCC) 8.1.0
+</pre>
+# Ya tenemos instalado el compilador que nos sirve. Sin embargo, el binario que buscará el sistema si llama a @g++@ será el ubicado en @/usr/bin/g++@. Debemos indicarle que utilize nuestro compilador en nuestra sesión. Modificamos @~/.bashrc@ y agregamos las siguientes líneas al final del archivo.
+<pre>
+export PATH=$HOME/gcc-8.1.0/bin:$PATH
+export LD_LIBRARY_PATH=$HOME/gcc-8.1.0/lib64:$LD_LIBRARY_PATH
+</pre>
+
+*Observación:* De ahora en mas todo lo que compiles se hará con la versión 8.1.0 de tu usuario. Si querés usar el compilador de @/usr/bin@ tendrás que decirle al sistema que use otro @$PATH@ y @$LD_LIBRARY_PATH@.
+
