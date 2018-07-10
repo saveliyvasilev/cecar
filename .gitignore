@@ -2,3 +2,13 @@
 *.tmp
 *.o
 *.pyc
+*.aux
+*.bcf
+slides.log
+*.nav
+*.out
+slides.pdf
+*.run.xml
+*.snm
+*.synctex.gz
+*.toc

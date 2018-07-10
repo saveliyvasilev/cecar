@@ -1,0 +1,71 @@
+\documentclass[]{beamer}
+% Class options include: notes, notesonly, handout, trans,
+%                        hidesubsections, shadesubsections,
+%                        inrow, blue, red, grey, brown
+\usepackage{graphicx}
+\usepackage{subfig}
+
+\usepackage[utf8]{inputenc}
+\usepackage[spanish]{babel}
+\usepackage[style=authoryear]{biblatex}
+\renewcommand*{\nameyeardelim}{\addcomma\addspace}
+
+\uselanguage{Spanish}
+\languagepath{Spanish}
+
+% Theme for beamer presentation.
+\usepackage{beamerthemesplit} 
+% Other themes include: beamerthemebars, beamerthemelined, 
+%                       beamerthemetree, beamerthemetreebars  
+% \usetheme{Warsaw}
+% \usetheme{Rochester}
+\usetheme{Boadilla}
+
+\setbeamertemplate{headline}{%
+\leavevmode%
+  \hbox{%
+    \begin{beamercolorbox}[wd=\paperwidth,ht=2.5ex,dp=1.125ex]{palette quaternary}%
+    \insertsectionnavigationhorizontal{\paperwidth}{}{\hskip0pt plus1filll}
+    \end{beamercolorbox}%
+  }
+}
+
+\title[CeCAR]{Utilizando el CeCAR}
+% \subtitle{Tesis presentada para optar al título de Doctor de la Universidad de Buenos Aires en el área Ciencias de la Computación}
+\author[Saveli Vassiliev]{Saveli Vassiliev}
+\institute[UBA, FCEyN, IC]{Universidad de Buenos Aires \\ Facultad de Ciencias Exactas y Naturales, Instituto de Cálculo}
+\date{\today}                    % Enter the date or \today between curly braces
+
+\begin{document}
+
+% Creates title page of slide show using above information
+\begin{frame}
+  \titlepage
+\end{frame}
+
+%\section[Outline]{}
+%
+%% Creates table of contents slide incorporating
+%% all \section and \subsection commands
+%\begin{frame}
+%  \tableofcontents
+%\end{frame}
+
+
+
+\begin{frame}
+\frametitle{Cliques}
+ \begin{definition}[Clique]
+ Una \emph{clique} es un subgrafo completo \textbf{maximal} de $G$. Ejemplo:
+ \end{definition}
+\end{frame}
+
+\begin{frame}[allowframebreaks]{References}
+\def\newblock{}
+% \printbibliography
+% \bibliographystyle{alpha}
+% \bibliography{../thesis/references}
+\end{frame}
+
+
+\end{document}
