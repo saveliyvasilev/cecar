@@ -3,6 +3,8 @@
 %                        hidesubsections, shadesubsections,
 %                        inrow, blue, red, grey, brown
 \usepackage{graphicx}
+\usepackage{hyperref}
+\usepackage{fancyvrb}
 \usepackage{subfig}
 
 \usepackage[utf8]{inputenc}
@@ -50,6 +52,60 @@
 %\begin{frame}
 %  \tableofcontents
 %\end{frame}
+
+
+\begin{frame}
+\frametitle{Plan}
+\begin{itemize}
+  \item Creación de claves y usuarios. Usaremos \Verb=PuTTY= para conectarnos al cluster y \Verb=WinSCP= para mover archivos.
+  \item Introducción a la terminal de Linux necesario para ejecutar aplicaciones.
+  \item Introducción a comandos de control de \Verb=Slurm=
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Para usuarios de Windows}
+\begin{itemize}
+  \item CeCAR es un cluster de exactas, físicamente en el pabellón 1.
+  \item Utiliza SLURM para controlar ejecución de trabajos.
+  \item Hay que saber comandos básicos de linux y algún gestor de 
+  \end{itemize}
+\end{frame}
+
+\begin{frame}
+\frametitle{Para usuarios de Windows}
+\begin{enumerate}
+  \item Descargar y instalar PuTTY de \url{https://www.putty.org/}
+  \item Abrir \Verb=<Archivos de programa>/puttygen.exe=
+  \item Clickear en \Verb=Generate= (esto genera un par de claves, la pública y la privada).
+  \item Poner un nombre que les permita recordar qué computadora usan en \Verb=Key comment= (sin espacios).
+\end{enumerate}
+  \begin{center}
+  \includegraphics[width=13em]{./puttygen}
+  \end{center} 
+\end{frame}
+
+\begin{frame}
+\begin{enumerate}
+  \item Escribir un passphrase (una contraseña suya).
+  \item Guardar la clave privada en un archivo \Verb=cecar.ppk=
+  \item Copiar la clave generada a la web del CeCAR como sigue.
+\end{enumerate}
+\begin{center}
+  \includegraphics[width=23em]{./ssh-web-cecar}
+  \end{center} 
+\end{frame}
+
+
+\begin{frame}
+\begin{enumerate}
+  \item Descargar e instalar \Verb=WinSCP= de \url{https://winscp.net/}
+  \item lalala
+\end{enumerate}
+\begin{center}
+  \includegraphics[width=23em]{./ssh-web-cecar}
+  \end{center} 
+\end{frame}
 
 
 
