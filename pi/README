@@ -1,0 +1,7 @@
+Este es un ejemplo de simulación de Pi en R. La ejecución en el 
+cluster se hace con muchos jobs (ntasks) independientes, que escriben su 
+salida a al archivo ./out. Esto se logra corriendo un array en SLURM.
+
+El archivo slurm.sh le pasa una variable que indica el numero de task_array
+al script de R, que se utiliza para poner en la primer columna del archivo
+out. De esta forma podemos recuperar datos y saber que nodo computó el valor.
