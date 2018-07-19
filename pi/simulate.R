@@ -2,7 +2,7 @@
 args <- commandArgs(trailing = TRUE)
 slurm_array_id <- as.integer(args[1])
 
-runs <- 1000000
+runs <- 100000000
 #runif samples from a uniform distribution
 xs <- runif(runs,min=-0.5,max=0.5)
 ys <- runif(runs,min=-0.5,max=0.5)

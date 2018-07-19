@@ -6,7 +6,7 @@
 #SBATCH --error=%A-%a.err
 #SBATCH --ntasks=1
 #SBATCH --time=00:05
-#SBATCH --mem-per-cpu=1024MB
+#SBATCH --mem-per-cpu=4096MB
 #SBATCH --array=1-100
 
 echo "trabajo \"${SLURM_JOB_NAME}\""
