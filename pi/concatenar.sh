@@ -1,1 +1,1 @@
-cat out-* > out
+cat out_* > out
