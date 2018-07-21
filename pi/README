@@ -1,7 +1,18 @@
 Este es un ejemplo de simulación de Pi en R. La ejecución en el 
 cluster se hace con muchos jobs (ntasks) independientes, que escriben su 
-salida a al archivo ./out. Esto se logra corriendo un array en SLURM.
+salida a al archivo ./out-<indice>. Esto se logra corriendo un array en SLURM.
 
 El archivo slurm.sh le pasa una variable que indica el numero de task_array
 al script de R, que se utiliza para poner en la primer columna del archivo
-out. De esta forma podemos recuperar datos y saber que nodo computó el valor.
+out-<indice>. De esta forma podemos recuperar datos y saber que nodo computó el valor.
+
+Vale notar que usamos un archivo diferente por cada nodo del cluster. Esto es
+necesario para garantizar que no haya 'condiciones de carrera', es decir,
+que no haya una escritura en simultanea al archivo 'out' y que nos arruine
+los datos de salida. Para recuperar los datos y tenerlos en un solo archivo
+corremos
+
+$ cat out-* > out
+
+que lista todos los contenidos de los archivos out-<indice> y los guarda
+en 'out'.

@@ -10,4 +10,4 @@ in.circle <- xs^2 + ys^2 <= 0.5^2
 mc.pi <- (sum(in.circle)/runs)*4
 
 dfrm <- data.frame(array_id=slurm_array_id, apx_pi=mc.pi)
-write.table(dfrm, sep=",", row.names=FALSE, col.names=FALSE, append=TRUE, file="out")
+write.table(dfrm, sep=",", row.names=FALSE, col.names=FALSE, append=TRUE, file=paste("out", slurm_array_id, sep="-"))
