@@ -1,4 +1,4 @@
-\documentclass[]{beamer}
+\documentclass[handout]{beamer}
 % Class options include: notes, notesonly, handout, trans,
 %                        hidesubsections, shadesubsections,
 %                        inrow, blue, red, grey, brown
@@ -57,19 +57,81 @@
 \begin{frame}
 \frametitle{Plan}
 \begin{itemize}
-  \item Creación de claves y usuarios. Usaremos \Verb=PuTTY= para conectarnos al cluster y \Verb=WinSCP= para mover archivos.
-  \item Introducción a la terminal de Linux necesario para ejecutar aplicaciones.
-  \item Introducción a comandos de control de \Verb=Slurm=
+  \item<+-> Hoy
+  \begin{itemize}
+    \item CeCAR (\url{https://cecar.fcen.uba.ar/}) -- ¿de qué se trata?
+    \item Creación de claves y usuarios. Usaremos \Verb=PuTTY= para conectarnos al cluster y \Verb=WinSCP= para mover archivos.
+    \item Introducción a la terminal de Linux. Aplicaciones de consola que les mejorarán la vida si las aprenden a usar.
+  \end{itemize}
+  \item<+-> Mañana
+  \begin{itemize}
+    \item Introducción a comandos de control de \Verb=SLURM=.
+    \item Computando $\pi$ usando \Verb=R=: enviando un trabajo, leyendo el output, mirando el estado.
+  \end{itemize}
+  \item<+-> Próximas dos semanas (para la gente del IC): estoy para resolver sus problemas, documentar los problemas más frecuentes y ayudarles a que todo funcione en sus aplicaciones particulares.
 \end{itemize}
 \end{frame}
 
 \begin{frame}
-\frametitle{Para usuarios de Windows}
+\frametitle{CeCAR}
+\textbf{Ce}ntro de \textbf{C}ómputo de \textbf{A}lto \textbf{R}endimiento
+
 \begin{itemize}
-  \item CeCAR es un cluster de exactas, físicamente en el pabellón 1.
-  \item Utiliza SLURM para controlar ejecución de trabajos.
-  \item Hay que saber comandos básicos de linux y algún gestor de 
-  \end{itemize}
+  \item<+-> Cluster de exactas, físicamente en el pabellón 1, que tiene:
+  \item<+-> $\approx 45$ nodos
+  \item<+-> $\approx 90$ CPUs
+  \item<+-> $\approx 700$ núcleos (cores / threads)
+  \item<+-> 26 GPUs. (no vamos a ver esto)
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Caso de uso: Monte Carlo}
+\begin{itemize}
+  \item<+-> Método: correr $n$ veces algo randomizado y hacer estadística sobre el output.
+  \item<+-> Problema: cada iteración tarda mucho.
+  \item<+-> Solución ``casera'': lanzamos la misma aplicación 4 veces con $n/4$ iteraciones y tardamos 4 veces menos. Inmediatamente uno piensa...
+\end{itemize}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\includegraphics[width=30em]{ifonly.jpg}
+\end{center}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Caso de uso: Monte Carlo}
+\begin{itemize}
+  \item En el IC este problema lo tiene mucha gente.
+  \item Es el más fácil de resolver sin tener que ``programar en paralelo'' (i.e., sincronización, locks, memoria compartida, cuellos de botella, etc).
+  \item Es lo que estaremos haciendo. Podrán ejecutar cosas con $n/100$ o $n/500$ en vez de $n/4$. 
+\end{itemize}
+\end{frame}
+
+
+\begin{frame}
+\frametitle{Workflow}
+\begin{center}
+\includegraphics[width=15em]{cluster_diagram.png}
+\end{center}
+\begin{enumerate}
+  \item Uno se conecta a un nodo ``controlador'' (\Verb=Head Node=).
+  \item Le dice al scheduler los parámetros de su programa y este se encarga de usar los nódos de cómputo.
+\end{enumerate}
+\end{frame}
+
+\begin{frame}
+\begin{center}
+\includegraphics[width=15em]{cluster_diagram.png}
+\end{center}
+Salvo quizás la máquina de ustedes (\Verb=Client Machine=), todo corre Linux. Para ``hablarle'' a \Verb=SLURM= no queda otra que saber usar una consola. 
+\vspace{1em}
+\pause
+
+Esto lo veremos luego de explicar como crear un usuario en el CeCAR.
 \end{frame}
 
 \begin{frame}
@@ -89,22 +151,46 @@
 \begin{enumerate}
   \item Escribir un passphrase (una contraseña suya).
   \item Guardar la clave privada en un archivo \Verb=cecar.ppk=
-  \item Copiar la clave generada a la web del CeCAR como sigue.
+  \item Ir a \url{https://cecar.fcen.uba.ar/solicitud/hpc/} y completar todos los campos, copiando la clave generada como sigue.
 \end{enumerate}
 \begin{center}
   \includegraphics[width=23em]{./ssh-web-cecar}
   \end{center} 
 \end{frame}
 
+\begin{frame}
+\frametitle{Usando la clave privada}
+Le hacen doble click a su clave \Verb=cecar.ppk= y eso lanza un agente que les hace la autenticación cuando usen \Verb=PuTTY=.
+
+\begin{center}
+\includegraphics[width=2em]{cecarppk.png}
+\end{center}
+
+Con esto ya se pueden conectar al cluster con PuTTY:
+\begin{center}
+\includegraphics[width=30em]{putty-cfg.png}
+\end{center}
+\end{frame}
+
+\begin{frame}
+\frametitle{Usando la clave privada}
+Si todo salió bien, si clickean en \Verb=Open= deberían ver algo así:
+\begin{center}
+\includegraphics[width=30em]{putty-session.png}
+\end{center}
+\end{frame}
+
+
 
 \begin{frame}
 \begin{enumerate}
   \item Descargar e instalar \Verb=WinSCP= de \url{https://winscp.net/}
-  \item lalala
+  \item Crear una nueva conexión como sigue
 \end{enumerate}
 \begin{center}
-  \includegraphics[width=23em]{./ssh-web-cecar}
+  \includegraphics[width=17em]{winscp-session.png}
   \end{center} 
+  Le pueden dar save y tenerlo como acceso directo.
 \end{frame}
 
 
@@ -114,6 +200,9 @@
  \begin{definition}[Clique]
  Una \emph{clique} es un subgrafo completo \textbf{maximal} de $G$. Ejemplo:
  \end{definition}
+ \begin{enumerate}
+ \item \textbf{NUNCA} ejecutamos nuestras aplicaciones pesadas en el \Verb=Head Node=, hay que ser buen vecino.
+\end{enumerate}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{References}
