@@ -1,4 +1,4 @@
-\documentclass[handout]{beamer}
+\documentclass[]{beamer}
 % Class options include: notes, notesonly, handout, trans,
 %                        hidesubsections, shadesubsections,
 %                        inrow, blue, red, grey, brown
@@ -81,7 +81,7 @@
   \item<+-> $\approx 45$ nodos
   \item<+-> $\approx 90$ CPUs
   \item<+-> $\approx 700$ núcleos (cores / threads)
-  \item<+-> 26 GPUs. (no vamos a ver esto)
+  \item<+-> 26 GPUs (no vamos a ver esto)
 \end{itemize}
 \end{frame}
 
@@ -93,14 +93,11 @@
   \item<+-> Problema: cada iteración tarda mucho.
   \item<+-> Solución ``casera'': lanzamos la misma aplicación 4 veces con $n/4$ iteraciones y tardamos 4 veces menos. Inmediatamente uno piensa...
 \end{itemize}
-\end{frame}
-
-\begin{frame}
+\onslide<+->
 \begin{center}
-\includegraphics[width=30em]{ifonly.jpg}
+\includegraphics[width=20em]{ifonly.jpg}
 \end{center}
 \end{frame}
-
 
 \begin{frame}
 \frametitle{Caso de uso: Monte Carlo}
@@ -137,7 +134,7 @@ Esto lo veremos luego de explicar como crear un usuario en el CeCAR.
 \begin{frame}
 \frametitle{Para usuarios de Windows}
 \begin{enumerate}
-  \item Descargar y instalar PuTTY de \url{https://www.putty.org/}
+  \item Descargar e instalar PuTTY de \url{https://www.putty.org/}
   \item Abrir \Verb=<Archivos de programa>/puttygen.exe=
   \item Clickear en \Verb=Generate= (esto genera un par de claves, la pública y la privada).
   \item Poner un nombre que les permita recordar qué computadora usan en \Verb=Key comment= (sin espacios).
@@ -183,6 +180,7 @@ Si todo salió bien, si clickean en \Verb=Open= deberían ver algo así:
 
 
 \begin{frame}
+\frametitle{WinSCP: Moviendo archivos al cluster y de vuelta}
 \begin{enumerate}
   \item Descargar e instalar \Verb=WinSCP= de \url{https://winscp.net/}
   \item Crear una nueva conexión como sigue
@@ -190,19 +188,55 @@ Si todo salió bien, si clickean en \Verb=Open= deberían ver algo así:
 \begin{center}
   \includegraphics[width=17em]{winscp-session.png}
   \end{center} 
-  Le pueden dar save y tenerlo como acceso directo.
+  Le pueden dar save y tenerlo como acceso directo. 
 \end{frame}
 
 
+\begin{frame}
+\frametitle{WinSCP: Moviendo archivos al cluster y de vuelta}
+Para usar WinSCP deben tener el agente de las claves corriendo (se abre cuando hacen doble click en \Verb=cecar.ppk=).
+
+Si todo salió bien, debería verse así:
+
+\begin{center}
+\includegraphics[width=30em]{winscp.png}
+\end{center}
+\end{frame}
+
 
 \begin{frame}
-\frametitle{Cliques}
- \begin{definition}[Clique]
- Una \emph{clique} es un subgrafo completo \textbf{maximal} de $G$. Ejemplo:
- \end{definition}
- \begin{enumerate}
- \item \textbf{NUNCA} ejecutamos nuestras aplicaciones pesadas en el \Verb=Head Node=, hay que ser buen vecino.
-\end{enumerate}
+\frametitle{Linux 101}
+Para jugar un poco con Linux lo mejor es hacer una máquina virtual:
+
+\begin{enumerate}
+  \item Descargar VirtualBox de \url{https://www.virtualbox.org/wiki/Downloads} e instalarlo.
+  \item Descargar un \Verb=.iso= de Ubuntu 18.04 (distro de linux linda): \url{www.ubuntu.com} - Downloads - Desktop.
+  \item Crear una máquina nueva en VirtualBox e instalar el ubuntu ahí (lo hacemos en vivo).
+  \end{enumerate}
+
+\end{frame}
+
+\begin{frame}
+Desde una terminal de linux:
+ \begin{itemize}[<+->]
+  \item ls
+  \item cd
+  \item cp
+  \item man
+  \item mv
+  \item rm
+  \item cat
+  \item less
+  \item sh
+  \item redigriendo stdout
+  \item vim
+ \end{itemize}
+\end{frame}
+
+\begin{frame}
+\huge{Mañana haremos uso de todo esto!\\A crear usuarios e instalar todo!}
+
+\huge{Gracias!}
 \end{frame}
 
 \begin{frame}[allowframebreaks]{References}
