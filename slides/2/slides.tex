@@ -34,7 +34,8 @@
 
 \title[CeCAR]{Utilizando el CeCAR}
 % \subtitle{Tesis presentada para optar al título de Doctor de la Universidad de Buenos Aires en el área Ciencias de la Computación}
-\author[Saveli Vassiliev]{Saveli Vassiliev}
+\author{\texorpdfstring{Saveli Vassiliev\newline\url{vassiliev.sav@gmail.com}}{Saveli Vassiliev}}
+% \author[Saveli Vassiliev]{Saveli Vassiliev}\author{\texorpdfstring{Author\newline\url{email@email.com}}{Author}}
 \institute[UBA, FCEyN, IC]{Universidad de Buenos Aires \\ Facultad de Ciencias Exactas y Naturales, Instituto de Cálculo}
 \date{\today}                    % Enter the date or \today between curly braces
 
@@ -234,35 +235,9 @@ srun ./programa
 \end{frame}
 
 
-
 \begin{frame}[fragile]
-\frametitle{Ejemplo que viene en el CeCAR: nomenclatura}
-\begin{itemize}
-  \item job-name: nombre del trabajo (descriptivo)
-  \item nodes: cantidad de nodos (recuerden que hay $\approx 42$)
-  \item ntasks: cantidad de t
-  \end{itemize}
-\begin{verbatim}
-#!/bin/bash
-# Ejecuta un programa común, 
-# corriendo 16 tareas distribuidas en 4 nodos.
-#SBATCH --job-name="ejemplo programa"
-#SBATCH --nodes=4
-#SBATCH --ntasks=16
-#SBATCH --workdir=/home/USUARIO/ejemplos
-#SBATCH --error="ejemplo-%j.err"
-#SBATCH --output="ejemplo-%j.out"
-#SBATCH --partition=freeriders
-#SBATCH --time=10:00
-
-[ -r /etc/profile.d/odin-users.sh ] && . /etc/profile.d/odin-users.sh
-
-srun ./programa
-\end{verbatim}
-\end{frame}
-
-\begin{frame}[fragile]
-\frametitle{Arrays de tareas}
+\frametitle{Arrays de tareas: Computando $\pi$}
+El archivo \Verb=pi/slurm.sh=:
 \begin{verbatim}
 #!/bin/bash
 #
@@ -282,15 +257,55 @@ srun Rscript simulate.R $SLURM_ARRAY_TASK_ID
 \end{frame}
 
 
-\begin{frame}
-\begin{center}
-{\huge{Computando $\pi$}}
+\begin{frame}[fragile]
+\frametitle{Arrays de tareas: Computando $\pi$}
+El programa \Verb=pi/simulate.R= empieza con las líneas
+\begin{verbatim}
+args <- commandArgs(trailing = TRUE)
+slurm_array_id <- as.integer(args[1])
+\end{verbatim}
+Que lee la variable \Verb=$SLURM_ARRAY_TASK_ID= que le pasamos en el script \Verb=slurm.sh= (ver diapo anterior).
 
-(manos a la obra)
-\end{center}
+Finalmente, desde \Verb=R= escribimos los archivos \Verb=out_<array_id>= usando la variable \Verb=slurm_array_id=.
+\begin{verbatim}
+write.table(dfrm, sep=",", 
+  row.names=FALSE, col.names=FALSE, append=TRUE, 
+  file=paste("out", slurm_array_id, sep="_"))
+\end{verbatim}
+\end{frame}
 
+
+\begin{frame}[fragile]
+\frametitle{Arrays de tareas: Computando $\pi$}
+Una vez que termina nuestro proceso (que lo ejecutamos corriendo \Verb=$ sbatch slurm.sh=), veremos muchos archivos generados en la carpeta:
+
+\begin{verbatim}
+$ ls
+... out_1 out_10 out_100 out_11 ...
+... 1045802-51.out 1045802-66.err 1045802-7.out ...
+\end{verbatim}
+\begin{itemize}
+  \item Los \Verb=.err= son archivos de error. Si todo salió bien el comando \Verb=$ cat *.err= no debería mostrar nada.
+  \item Los \Verb=.out= son archivos de ``standard output'' (\Verb=stdout=), no deberían tener nada interesante.
+  \item Los \Verb=out_<id>= tienen el dato computado por cada \Verb=id= del array:
+  \begin{verbatim}
+$ cat out_52
+52,3.14149016
+  \end{verbatim}
+  \item Para armar un \Verb=.csv= con todos los $\pi's$ computados: \Verb=$ cat out_* > todos_pi.csv=.
+\end{itemize}
 \end{frame}
 
 
 
+\begin{frame}[fragile]
+\frametitle{Moraleja para Monte Carlo en \Verb=R=}
+\begin{itemize}
+  \item Dividen el número de iteraciones de su programa en \Verb=R= por la cantidad de tareas que decidan correr (menos de 1000 es un buen número).
+  \item Su script \Verb=.sh= lo arman editando el \Verb=pi/slurm.sh=. Allí ajustan el tamaño del array.
+  \item En su programa \Verb=R= leen el índice del array de SLURM, y lo usan para referenciar lo que deseen. \textbf{Importante:} Escribir en un archivo separado por cada id de array.
+  \item Obtienen los resultados de cada nodo leyendo su correspondiente archivo.
+  \item Si todo funcionó bien, a disfrutar del speedup!
+\end{itemize}
+\end{frame}
 \end{document}
