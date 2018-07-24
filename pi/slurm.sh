@@ -1,12 +1,11 @@
 #!/bin/bash
 #
 #SBATCH --job-name=simulate_pi
-##SBATCH --partition=batch
+#SBATCH --partition=batch-xeon
 #SBATCH --output=%A-%a.out
 #SBATCH --error=%A-%a.err
 #SBATCH --ntasks=1
 #SBATCH --time=00:05
-#SBATCH --partition=batch-xeon
 #SBATCH --mem-per-cpu=4096MB
 #SBATCH --array=1-100
 
