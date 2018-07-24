@@ -57,13 +57,13 @@
 \begin{frame}
 \frametitle{Plan}
 \begin{itemize}
-  \item<+-> Hoy
+  \item<+-> \color{gray} Ayer
   \begin{itemize}
-    \item CeCAR (\url{https://cecar.fcen.uba.ar/}) -- ¿de qué se trata?
+    \item \color{gray} CeCAR (\url{https://cecar.fcen.uba.ar/}) -- ¿de qué se trata?
     \item Creación de claves y usuarios. Usaremos \Verb=PuTTY= para conectarnos al cluster y \Verb=WinSCP= para mover archivos.
     \item Introducción a la terminal de Linux. Aplicaciones de consola que les mejorarán la vida si las aprenden a usar.
   \end{itemize}
-  \item<+-> Mañana
+  \item<+-> Hoy
   \begin{itemize}
     \item Introducción a comandos de control de \Verb=SLURM=.
     \item Computando $\pi$ usando \Verb=R=: enviando un trabajo, leyendo el output, mirando el estado.
@@ -73,170 +73,222 @@
 \end{frame}
 
 \begin{frame}
-\frametitle{CeCAR}
-\textbf{Ce}ntro de \textbf{C}ómputo de \textbf{A}lto \textbf{R}endimiento
+\begin{center}
+\huge{Comandos de SLURM}
+\end{center}
+\end{frame}
 
+\begin{frame}[fragile]
+\frametitle{sinfo: información general de los nodos del cluster}
+
+\begin{verbatim}
+$ sinfo
+PARTITION  AVAIL  TIMELIMIT  NODES  STATE NODELIST
+...
+freeriders    up 3-00:00:00      3  alloc g[03-05]
+freeriders    up 3-00:00:00     26   idle e02,g[01-02],n...
+batch*        up 3-00:00:00     10    mix e01,g[06-12],n...
+batch*        up 3-00:00:00      3  alloc g[03-05]
+...
+\end{verbatim}
 \begin{itemize}
-  \item Cluster de exactas, físicamente en el pabellón 1, que tiene:
-  \item $\approx 45$ nodos
-  \item $\approx 90$ CPUs
-  \item $\approx 700$ núcleos (cores / threads)
-  \item 26 GPUs (no vamos a ver esto)
+  \item PARTITION: El * denota la partición default.
+  \item AVAIL: si está prendido o no (up / down)
+  \item TIMELIMIT: tiempo que puede tomar una tarea en esta partición
+  \item STATE: down (caído), mix (algunos CPUs ocupados), alloc (ocupado totalmente), idle (disponible).
+  \item NODES: nro. de nodos en esa partición en ese estado
+  \item NODELIST: los nombres de los nodos
 \end{itemize}
 \end{frame}
 
 
-\begin{frame}
-\frametitle{Caso de uso: Monte Carlo}
+
+\begin{frame}[fragile]
+\frametitle{squeue: muestra los trabajos en el cluster}
+
+\begin{verbatim}
+$ squeue
+JOBID    PARTITION  NAME   USER  ST       TIME  NODES NODELIST(REASON)
+1043049     batch  onion_2 fcarr PD       0:00      4 (Dependency)
+1043050     batch  onion_2 fcarr PD       0:00      4 (Dependency)
+1043052     batch  onion_1 fcarr  R 1-16:50:11      4 g[09-12]
+1042993 batch-gpu rxn_10.4 ldefel R    6:00:04      1 g03
+\end{verbatim}
 \begin{itemize}
-  \item<+-> Método: correr $n$ veces algo randomizado y hacer estadística sobre el output.
-  \item<+-> Problema: cada iteración tarda mucho.
-  \item<+-> Solución ``casera'': lanzamos la misma aplicación 4 veces con $n/4$ iteraciones y tardamos 4 veces menos. Inmediatamente uno piensa...
-\end{itemize}
-\onslide<+->
-\begin{center}
-\includegraphics[width=20em]{ifonly.jpg}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{Caso de uso: Monte Carlo}
-\begin{itemize}
-  \item En el IC este problema lo tiene mucha gente.
-  \item Es el más fácil de resolver sin tener que ``programar en paralelo'' (i.e., sincronización, locks, memoria compartida, cuellos de botella, etc).
-  \item Es lo que estaremos haciendo. Podrán ejecutar cosas con $n/100$ o $n/500$ en vez de $n/4$. 
+  \item JOBID: número de trabajo/tarea. (Este es importante!)
+  \item NAME: nombre del trabajo (es para uds.)
+  \item ST: PD (pending), R (running), CA (cancelled), y otros (ver \Verb=man squeue=).
+  \item TIME: tiempo que consumió
+  \item NODES: nro. de nodos que usa
+  \item NODELIST(REASON): los nombres de los nodos que usa, o la razón de por qué aún no está ejecutando (si el estado no es R).
 \end{itemize}
 \end{frame}
 
 
-\begin{frame}
-\frametitle{Workflow}
-\begin{center}
-\includegraphics[width=15em]{cluster_diagram.png}
-\end{center}
-\begin{enumerate}
-  \item Uno se conecta a un nodo ``controlador'' (\Verb=Head Node=).
-  \item Le dice al scheduler los parámetros de su programa y este se encarga de usar los nódos de cómputo.
-\end{enumerate}
+
+\begin{frame}[fragile]
+\frametitle{sbatch: envía un trabajo al cluster}
+
+\begin{verbatim}
+$ sbatch slurm.sh
+Submitted batch job 1044699
+\end{verbatim}
+\pause
+Y ahora corremos
+\begin{verbatim}
+$ squeue -u svassiliev
+JOBID PARTITION     NAME     USER   ST  TIME  NODES NODELIST(REASON)
+1044699_1 batch-xeo simulate svass  R   0:02      1 xeon01
+1044699_2 batch-xeo simulate svass  R   0:02      1 xeon01
+\end{verbatim}
 \end{frame}
 
-\begin{frame}
-\begin{center}
-\includegraphics[width=15em]{cluster_diagram.png}
-\end{center}
-Salvo quizás la máquina de ustedes (\Verb=Client Machine=), todo corre Linux. Para ``hablarle'' a \Verb=SLURM= no queda otra que saber usar una consola. 
-\vspace{1em}
+\begin{frame}[fragile]
+\frametitle{scancel: cancelar un trabajo encolado / corriendo}
+
+\begin{verbatim}
+$ scancel 1044699 
+$ cat 1044699-1.err
+srun: Job step aborted: Waiting up to 32 seconds for job step to finish.
+srun: got SIGCONT
+slurmstepd: error: *** JOB 1044966 ON xeon06 CANCELLED AT 2018-07-24T14:06:41 ***
+srun: forcing job termination
+slurmstepd: error: *** STEP 1044966.0 ON xeon06 CANCELLED AT 2018-07-24T14:06:41 ***
+srun: error: xeon06: task 0: Terminated
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{scancel: cancelar todos mis trabajos}
+
+\begin{verbatim}
+$ scancel -u svassiliev
+\end{verbatim}
+
+Cancela todo lo que estoy ejecutando como \Verb=svassiliev=. Para mas opciones mirar \Verb=man scancel=.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{srun: correr un trabajo}
+Sirve para correr trabajos interactivamente en algún nodo. Si alguien necesita esto lo podemos ver otro día.
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{\Verb=--help= y \Verb=--usage=}
+Además de tener los manuales \Verb=man <comando>=, podemos ver un sumario de funcionalidad de esta forma:
+\begin{verbatim}
+$ <comando> --help
+$ <comando> --usage
+\end{verbatim}
+
 \pause
 
-Esto lo veremos luego de explicar como crear un usuario en el CeCAR.
+El \Verb=--help= es muy práctico! Además hay un montón de información en internet si buscan ``SLURM''.
 \end{frame}
 
 \begin{frame}
-\frametitle{Para usuarios de Windows}
-\begin{enumerate}
-  \item Descargar e instalar PuTTY de \url{https://www.putty.org/}
-  \item Abrir \Verb=<Archivos de programa>/puttygen.exe=
-  \item Clickear en \Verb=Generate= (esto genera un par de claves, la pública y la privada).
-  \item Poner un nombre que les permita recordar qué computadora usan en \Verb=Key comment= (sin espacios).
-\end{enumerate}
-  \begin{center}
-  \includegraphics[width=13em]{./puttygen}
-  \end{center} 
-\end{frame}
-
-\begin{frame}
-\begin{enumerate}
-  \item Escribir un passphrase (una contraseña suya).
-  \item Guardar la clave privada en un archivo \Verb=cecar.ppk=
-  \item Ir a \url{https://cecar.fcen.uba.ar/solicitud/hpc/} y completar todos los campos, copiando la clave generada como sigue.
-\end{enumerate}
 \begin{center}
-  \includegraphics[width=23em]{./ssh-web-cecar}
-  \end{center} 
-\end{frame}
-
-\begin{frame}
-\frametitle{Usando la clave privada}
-Le hacen doble click a su clave \Verb=cecar.ppk= y eso lanza un agente que les hace la autenticación cuando usen \Verb=PuTTY=.
-
-\begin{center}
-\includegraphics[width=2em]{cecarppk.png}
-\end{center}
-
-Con esto ya se pueden conectar al cluster con PuTTY:
-\begin{center}
-\includegraphics[width=30em]{putty-cfg.png}
-\end{center}
-\end{frame}
-
-\begin{frame}
-\frametitle{Usando la clave privada}
-Si todo salió bien, si clickean en \Verb=Open= deberían ver algo así:
-\begin{center}
-\includegraphics[width=30em]{putty-session.png}
+\huge{Script BASH para enviar trabajos}
 \end{center}
 \end{frame}
 
 
+\begin{frame}[fragile]
+\frametitle{Estructura del script para enviar trabajos}
+\begin{verbatim}
+#!/bin/bash
 
-\begin{frame}
-\frametitle{WinSCP: Moviendo archivos al cluster y de vuelta}
-\begin{enumerate}
-  \item Descargar e instalar \Verb=WinSCP= de \url{https://winscp.net/}
-  \item Crear una nueva conexión como sigue
-\end{enumerate}
-\begin{center}
-  \includegraphics[width=17em]{winscp-session.png}
-  \end{center} 
-  Le pueden dar save y tenerlo como acceso directo. 
+#SBATCH ... (configuración de recursos)
+#SBATCH ...
+
+################################
+
+(algunas líneas que piden los administradores,
+que no empiezan con #SBATCH)
+
+################################
+
+srun <nuestro programa> <nuestros parámetros>
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Ejemplo que viene en el CeCAR}
+\begin{verbatim}
+#!/bin/bash
+# Ejecuta un programa común, 
+# corriendo 16 tareas distribuidas en 4 nodos.
+#SBATCH --job-name="ejemplo programa"
+#SBATCH --nodes=4
+#SBATCH --ntasks=16
+#SBATCH --workdir=/home/USUARIO/ejemplos
+#SBATCH --error="ejemplo-%j.err"
+#SBATCH --output="ejemplo-%j.out"
+#SBATCH --partition=freeriders
+#SBATCH --time=10:00
+
+[ -r /etc/profile.d/odin-users.sh ] && . /etc/profile.d/odin-users.sh
+
+srun ./programa
+\end{verbatim}
+\end{frame}
+
+
+
+\begin{frame}[fragile]
+\frametitle{Ejemplo que viene en el CeCAR: nomenclatura}
+\begin{itemize}
+  \item job-name: nombre del trabajo (descriptivo)
+  \item nodes: cantidad de nodos (recuerden que hay $\approx 42$)
+  \item ntasks: cantidad de t
+  \end{itemize}
+\begin{verbatim}
+#!/bin/bash
+# Ejecuta un programa común, 
+# corriendo 16 tareas distribuidas en 4 nodos.
+#SBATCH --job-name="ejemplo programa"
+#SBATCH --nodes=4
+#SBATCH --ntasks=16
+#SBATCH --workdir=/home/USUARIO/ejemplos
+#SBATCH --error="ejemplo-%j.err"
+#SBATCH --output="ejemplo-%j.out"
+#SBATCH --partition=freeriders
+#SBATCH --time=10:00
+
+[ -r /etc/profile.d/odin-users.sh ] && . /etc/profile.d/odin-users.sh
+
+srun ./programa
+\end{verbatim}
+\end{frame}
+
+\begin{frame}[fragile]
+\frametitle{Arrays de tareas}
+\begin{verbatim}
+#!/bin/bash
+#
+#SBATCH --job-name=simulate_pi
+#SBATCH --partition=batch-xeon
+#SBATCH --output=%A-%a.out
+#SBATCH --error=%A-%a.err
+#SBATCH --ntasks=1
+#SBATCH --time=00:05
+#SBATCH --mem-per-cpu=4096MB
+#SBATCH --array=1-100
+
+[ -r /etc/profile.d/odin-users.sh ] && . /etc/profile.d/odin-users.sh
+
+srun Rscript simulate.R $SLURM_ARRAY_TASK_ID
+\end{verbatim}
 \end{frame}
 
 
 \begin{frame}
-\frametitle{WinSCP: Moviendo archivos al cluster y de vuelta}
-Para usar WinSCP deben tener el agente de las claves corriendo (se abre cuando hacen doble click en \Verb=cecar.ppk=).
-
-Si todo salió bien, debería verse así:
-
 \begin{center}
-\includegraphics[width=30em]{winscp.png}
+{\huge{Computando $\pi$}}
+
+(manos a la obra)
 \end{center}
-\end{frame}
 
-
-\begin{frame}
-\frametitle{Linux 101}
-Para jugar un poco con Linux lo mejor es hacer una máquina virtual:
-
-\begin{enumerate}
-  \item Descargar VirtualBox de \url{https://www.virtualbox.org/wiki/Downloads} e instalarlo.
-  \item Descargar un \Verb=.iso= de Ubuntu 18.04 (distro de linux linda): \url{www.ubuntu.com} - Downloads - Desktop.
-  \item Crear una máquina nueva en VirtualBox e instalar el ubuntu ahí (lo hacemos en vivo).
-  \end{enumerate}
-
-\end{frame}
-
-\begin{frame}
-Desde una terminal de linux:
- \begin{itemize}
-  \item ls
-  \item cd
-  \item cp
-  \item man
-  \item mv
-  \item rm
-  \item cat
-  \item less
-  \item sh
-  \item redirigiendo stdout
-  \item vim
- \end{itemize}
-\end{frame}
-
-\begin{frame}
-\huge{Mañana haremos uso de todo esto!\\A crear usuarios e instalar todo!}
-
-\huge{Gracias!}
 \end{frame}
 
 
