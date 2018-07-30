@@ -1,0 +1,76 @@
+// Sistema Minimo
+//
+LIB "elim.lib";
+ring r=(0,a13,k1,k2,k3,k4,k5,k6,k7,k8,k9,k10,k11,k12,k13,k14,k15,c1,c2,c3,c4),(x1,x2,x3,x4,x5,x6,x7,x8,x9,x10,x11,x12,x13,x14,x15,x16,x17,x18,x19,x20,x21,x22,x23,x24,x25,x26,x27),dp;
+//
+poly f1 = k1-k4*x1*x3-k7*x1*x4-k2*x1;
+poly f2 = -k3*x2+k4*x1*x3;
+poly f3 = -k4*x1*x3+k7*x1*x4;
+poly f4 = -f3;
+poly f5 = k6-k5*x5+k7*x1*x4-k8*x5*x6;
+poly f6 = k10*x9*x8-k8*x5*x6;
+poly f7 = k8*x5*x6-k9*x7;
+poly f8 = k9*x7-k10*x9*x8;
+poly f9 = k11*x10*x11-k10*x9*x8;
+poly f10= -f9;
+poly f11 = k12*x13*x12-k11*x10*x11;
+poly f12 = -f11;
+poly f13 = k13-k12*x13*x12-a13*x13;
+poly f14 = k12*x13*x12-k14*x14;
+poly f15 = k8*x5*x6-k15*x15;
+//
+poly g1 = x3+x4-c1;
+poly g2 = x6+x7+x8-c2;
+poly g3 = x9+x10-c3;
+poly g4 = x11+x12-c4;
+//
+ideal i = f1,f2,f3,f4,f5,f6,f7,f8,f9,f10,f11,f12,f13,f14,f15;
+ideal ii = i,g1,g2,g3,g4;
+//
+ideal j=std(ii);
+j;
+// elim(j, x1*x2*x3*x4*x5*x6*x7*x8*x9*x10*x11*x12*x13*x14);
+//
+// print("");
+// //
+// poly a1 = k2*(k4+k7)+2*k4*k7*c1;
+// poly a2 = a13*k8*k9*k11+a13*k8*k10*k11*c3+k8*k9*k10*k12*c2+k8*k9*k11*k12*c4+k8*k10*k11*k12*c3*c4+k8*k10*k12*k13;
+// 
+// 
+// //
+// poly p1 = a1*x1-k1*(k4+k7);
+// poly p2 = k3*a1*x2-k1*k4*k7*c1;
+// poly p3 = (k4+k7)*x3-k7*c1;
+// poly p4 = (k4+k7)*x4-k4*c1;
+// // poly p5 = ;
+// // poly p6 = ;
+// // poly p7 = ;
+// // poly p8 = ;
+// // poly p9 = ;
+// // poly p10 = ;
+// // poly p11 = ;
+// // poly p12 = ;
+// // poly p13 = ;
+// // poly p14 = ;
+// poly p15 = a1*k8*k10*k12*x15^4+k15^3*(-a1*(a2+k5*k9*k10*k12+k6*k8*k10*k12)-k1*k4*k7*k8*k10*k12*c1)*x15^3+k15^2*(a2*(c1*k1*k4*k7+a1*k6)+a1*(a13*k8*k9*k10*k11*c2*c3+a13*k5*k9*k10*k11*c3+k5*k9*k10*k11*k12*c3*c4+k5*k9*k10*k12*k13+k8*k9*k10*k11*k12*c2*c3*c4+k8*k9*k10*k12*k13*c2+k8*k9*k11*k12*k13*c4+k8*k10*k11*k12*k13*c3*c4))*x15^2+k15*(-a13*k1*k4*k7*k8*k9*k10*k11*c1*c2*c3-k1*k4*k7*k8*k9*k10*k11*k12*c1*c2*c3*c4-k1*k4*k7*k8*k9*k10*k12*k13*c1*c2-k1*k4*k7*k8*k9*k11*k12*k13*c1*c4-k1*k4*k7*k8*k10*k11*k12*k13*c1*c3*c4-a1*k5*k9*k10*k11*k12*k13*c3*c4-a13*a1*k6*k8*k9*k10*k11*c2*c3-a1*k6*k8*k9*k10*k11*k12*c2*c3*c4-a1*k6*k8*k9*k10*k12*k13*c2-a1*k6*k8*k9*k11*k12*k13*c4-a1*k6*k8*k10*k11*k12*k13*c3*c4-a1*k8*k9*k10*k11*k12*k13*c2*c3*c4)*x15+k8*k9*k10*k11*k12*k13*c2*c3*c4*(k1*k4*k7*c1+a1*k6);
+// //
+// //
+// reduce(p1,j);
+// reduce(p2,j);
+// reduce(p3,j);
+// reduce(p4,j);
+// // reduce(p5,j);
+// // reduce(p6,j);
+// // reduce(p7,j);
+// // reduce(p8,j);
+// // reduce(p9,j);
+// // reduce(p10,j);
+// // reduce(p11,j);
+// // reduce(p12,j);
+// // reduce(p13,j);
+// // reduce(p14,j);
+// reduce(p15,j);
+
+
+
+
